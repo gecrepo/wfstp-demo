@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<views xmlns="http://schemas.haulmont.com/cuba/view.xsd">
+
+    <view class="com.company.wfstpdemo.entity.Ticket"
+          extends="_local"
+          name="ticket-browse">
+        <property name="workflow"
+                  view="_minimal"/>
+    </view>
+
+    <view class="com.company.wfstpdemo.entity.Ticket"
+          extends="_local"
+          name="ticket-edit">
+        <property name="workflow"
+                  view="_minimal"/>
+    </view>
+</views>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<screen-config xmlns="http://schemas.haulmont.com/cuba/screens.xsd">
+    <screen id="wfstpdemo$Ticket.browse"
+            template="com/company/wfstpdemo/web/ticket/task-browse.xml"/>
+    <screen id="wfstpdemo$Ticket.edit"
+            template="com/company/wfstpdemo/web/ticket/task-edit.xml"/>
+</screen-config>
