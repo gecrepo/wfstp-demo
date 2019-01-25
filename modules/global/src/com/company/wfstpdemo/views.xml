@@ -11,7 +11,5 @@
     <view class="com.company.wfstpdemo.entity.Ticket"
           extends="_local"
           name="ticket-edit">
-        <property name="workflow"
-                  view="_minimal"/>
     </view>
 </views>

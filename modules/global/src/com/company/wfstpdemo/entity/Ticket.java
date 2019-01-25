@@ -19,12 +19,21 @@ import java.util.UUID;
 public class Ticket extends StandardEntity implements WorkflowEntity<UUID> {
     private static final long serialVersionUID = 7337017127753361381L;
 
+    /**
+     * описание задачи
+     */
     @Column(name = "DESCRIPTION", length = 2000)
     private String description;
 
+    /**
+     * Срочная ли задачи
+     */
     @Column(name = "URGENT")
     private Boolean urgent = false;
 
+    /**
+     * Специфичные для рабочего процесса поля. Начало.
+     */
     @Column(name = "STEP_NAME")
     private String stepName;
 
@@ -34,6 +43,9 @@ public class Ticket extends StandardEntity implements WorkflowEntity<UUID> {
 
     @Column(name = "STATUS")
     private Integer status;
+    /**
+     * Специфичные для рабочего процесса поля. Конец.
+     */
 
 
     public String getDescription() {

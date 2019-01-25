@@ -1,6 +1,7 @@
 package com.company.wfstpdemo.web.ticket;
 
 import com.company.wfstpdemo.entity.Ticket;
+import com.groupstp.workflowstp.entity.Workflow;
 import com.groupstp.workflowstp.entity.WorkflowInstanceTask;
 import com.groupstp.workflowstp.service.WorkflowService;
 import com.groupstp.workflowstp.web.bean.WorkflowWebBean;
@@ -43,18 +44,24 @@ public class TicketEdit extends AbstractEditor<Ticket> {
 
     private void initWorkflowExtension() {
         if (!PersistenceHelper.isNew(getItem())) {
-            WorkflowInstanceTask task = workflowService.loadLastTask(getItem());
-            if (task != null) {
+            //задача не новая, проверим в рабочем ли процессе она
+            Workflow workflow = workflowService.getWorkflow(getItem());
+            if (workflow != null) {
+                //для обрабатываемых задач выключаем все редактирование
                 disableControls();
-                if (!workflowWebBean.isActor(userSessionSource.getUserSession().getUser(), task.getStep().getStage())) {
-                    closeWithAccessDenied();
-                }
-                try {
-                    workflowWebBean.extendEditor(getItem(), this);
-                } catch (Exception e) {
-                    log.error("Failed to extend the ticket editor screen", e);
-                    close(CLOSE_ACTION_ID, true);
-                    throw new RuntimeException(getMessage("ticketEdit.error.extensionFailed "), e);
+
+                WorkflowInstanceTask task = workflowService.getWorkflowInstanceTask(getItem());
+                if (task != null) {//выполняется некий шаг
+                    if (!workflowWebBean.isActor(userSessionSource.getUserSession().getUser(), task.getStep().getStage())) {
+                        //пользователь не участник шага - закрываем экран с запрещенным доступом
+                        closeWithAccessDenied();
+                        return;
+                    }
+                    try {
+                        workflowWebBean.extendEditor(getItem(), this);
+                    } catch (Exception e) {
+                        closeWithException(getMessage("ticketEdit.error.extensionFailed"), e);
+                    }
                 }
             }
         }
@@ -70,5 +77,11 @@ public class TicketEdit extends AbstractEditor<Ticket> {
     private void closeWithAccessDenied() {
         showNotification(getMessage("ticketEdit.error.accessDenied"), NotificationType.ERROR);
         close(CLOSE_ACTION_ID, true);
+    }
+
+    private void closeWithException(String messageKey, Exception e) {
+        log.error(messageKey, e);
+        close(CLOSE_ACTION_ID, true);
+        throw new RuntimeException(messageKey, e);
     }
 }

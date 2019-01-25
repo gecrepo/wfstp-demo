@@ -32,10 +32,10 @@ public class TicketBrowse extends AbstractLookup {
     public void init(Map<String, Object> params) {
         super.init(params);
 
-        initTicketsTableActions();
+        initActions();
     }
 
-    private void initTicketsTableActions() {
+    private void initActions() {
         //действие для отправки задачи в рабочий процесс
         ticketsTable.addAction(new ItemTrackingAction("run") {
             @Override
@@ -50,10 +50,11 @@ public class TicketBrowse extends AbstractLookup {
 
             @Override
             public void actionPerform(Component component) {
-                Ticket selected = ticketsTable.getSingleSelected();
-                if (selected != null) {
+                Ticket item = ticketsTable.getSingleSelected();
+                if (item != null) {
                     try {
-                        workflowService.startWorkflow(selected, workflowService.determinateWorkflow(selected));
+                        //автоматически определяем рабочий процесс и запускаем по ней задачу
+                        workflowService.startWorkflow(item, workflowService.determinateWorkflow(item));
                     } catch (Exception e) {
                         log.error("Failed to start ticket workflow", e);
                         showNotification(getMessage("notification.alert"),
@@ -69,6 +70,7 @@ public class TicketBrowse extends AbstractLookup {
             @Override
             public boolean isPermitted() {
                 if (super.isPermitted()) {
+                    //запустить задачи можно только не запущенные
                     Ticket selected = ticketsTable.getSingleSelected();
                     return selected != null && selected.getWorkflow() == null;
                 }

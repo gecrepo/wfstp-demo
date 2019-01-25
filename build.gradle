@@ -43,7 +43,7 @@ cuba {
 
 dependencies {
     appComponent("com.haulmont.cuba:cuba-global:$cubaVersion")
-    appComponent("com.groupstp.workflowstp:wfstp-global:1.0.5")
+    appComponent("com.groupstp.workflowstp:wfstp-global:1.0.6")
 
 }
 
