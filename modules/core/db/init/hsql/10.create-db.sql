@@ -9,7 +9,8 @@ create table WFSTPDEMO_TICKET (
     DELETE_TS timestamp,
     DELETED_BY varchar(50),
     --
-    DESCRIPTION varchar(2000),
+    NAME varchar(500) not null,
+    DESCRIPTION varchar(2000) not null,
     URGENT boolean,
     STEP_NAME varchar(255),
     WORKFLOW_ID varchar(36),

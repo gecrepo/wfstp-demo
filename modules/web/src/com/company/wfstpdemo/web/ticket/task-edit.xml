@@ -4,11 +4,11 @@
         caption="msg://ticketEdit.caption"
         class="com.company.wfstpdemo.web.ticket.TicketEdit"
         wf:actions="windowActions"
-        datasource="taskDs"
+        datasource="ticketDs"
         focusComponent="fieldGroup"
         messagesPack="com.company.wfstpdemo.web.ticket">
     <dsContext>
-        <datasource id="taskDs"
+        <datasource id="ticketDs"
                     class="com.company.wfstpdemo.entity.Ticket"
                     view="ticket-edit"/>
     </dsContext>
@@ -17,12 +17,13 @@
     <layout expand="description"
             spacing="true">
         <fieldGroup id="fieldGroup"
-                    datasource="taskDs">
-            <column width="250px">
+                    datasource="ticketDs">
+            <column width="425px">
+                <field property="name" id="name"/>
                 <field property="urgent" id="urgent"/>
             </column>
         </fieldGroup>
-        <richTextArea datasource="taskDs" property="description" id="description" width="100%" required="true"/>
+        <textArea datasource="ticketDs" property="description" id="description" width="500px"/>
 
         <hbox spacing="true" stylename="c-edit-window-actions" id="windowActions">
             <button id="windowCommit" action="windowCommit" icon="EDITOR_OK"/>

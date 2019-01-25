@@ -7,9 +7,9 @@ import com.groupstp.workflowstp.service.WorkflowService;
 import com.groupstp.workflowstp.web.bean.WorkflowWebBean;
 import com.haulmont.cuba.core.global.PersistenceHelper;
 import com.haulmont.cuba.core.global.UserSessionSource;
+import com.haulmont.cuba.gui.ComponentsHelper;
 import com.haulmont.cuba.gui.components.AbstractEditor;
-import com.haulmont.cuba.gui.components.FieldGroup;
-import com.haulmont.cuba.gui.components.RichTextArea;
+import com.haulmont.cuba.gui.components.DatasourceComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,17 +29,13 @@ public class TicketEdit extends AbstractEditor<Ticket> {
     @Inject
     private UserSessionSource userSessionSource;
 
-    @Inject
-    private FieldGroup fieldGroup;
-    @Inject
-    private RichTextArea description;
-
 
     @Override
     public void ready() {
         super.ready();
 
         initWorkflowExtension();
+        setShowSaveNotification(false);
     }
 
     private void initWorkflowExtension() {
@@ -48,30 +44,31 @@ public class TicketEdit extends AbstractEditor<Ticket> {
             Workflow workflow = workflowService.getWorkflow(getItem());
             if (workflow != null) {
                 //для обрабатываемых задач выключаем все редактирование
-                disableControls();
+                disableFields();
 
                 WorkflowInstanceTask task = workflowService.getWorkflowInstanceTask(getItem());
-                if (task != null) {//выполняется некий шаг
+                if (task != null) {//текущая выполняемая задача по шагу
                     if (!workflowWebBean.isActor(userSessionSource.getUserSession().getUser(), task.getStep().getStage())) {
-                        //пользователь не участник шага - закрываем экран с запрещенным доступом
+                        //пользователь не участник шага - закрываем экран с запретом доступа
                         closeWithAccessDenied();
                         return;
                     }
                     try {
-                        workflowWebBean.extendEditor(getItem(), this);
+                        //расширяем экран согласно задаче по шагу
+                        workflowWebBean.extendEditor(getItem(), this, task);
                     } catch (Exception e) {
-                        closeWithException(getMessage("ticketEdit.error.extensionFailed"), e);
+                        closeWithLog(getMessage("ticketEdit.error.extensionFailed"), e);
                     }
                 }
             }
         }
     }
 
-    private void disableControls() {
-        for (FieldGroup.FieldConfig fieldConfig : fieldGroup.getFields()) {
-            fieldConfig.setEditable(Boolean.FALSE);
-        }
-        description.setEditable(false);
+    private void disableFields() {
+        ComponentsHelper.walkComponents(this, (component, name) -> {
+            if (component instanceof DatasourceComponent)
+                ((DatasourceComponent) component).setEditable(false);
+        });
     }
 
     private void closeWithAccessDenied() {
@@ -79,9 +76,9 @@ public class TicketEdit extends AbstractEditor<Ticket> {
         close(CLOSE_ACTION_ID, true);
     }
 
-    private void closeWithException(String messageKey, Exception e) {
-        log.error(messageKey, e);
+    private void closeWithLog(String message, Exception e) {
+        log.error(message, e);
+        showNotification(message, NotificationType.ERROR);
         close(CLOSE_ACTION_ID, true);
-        throw new RuntimeException(messageKey, e);
     }
 }

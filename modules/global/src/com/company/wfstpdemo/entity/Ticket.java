@@ -1,6 +1,7 @@
 package com.company.wfstpdemo.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 import com.groupstp.workflowstp.entity.Workflow;
 import com.groupstp.workflowstp.entity.WorkflowEntity;
@@ -13,26 +14,32 @@ import java.util.UUID;
 /**
  * @author adiatullin
  */
-@NamePattern("%s|id")
+@NamePattern("%s|name")
 @Table(name = "WFSTPDEMO_TICKET")
 @Entity(name = "wfstpdemo$Ticket")
 public class Ticket extends StandardEntity implements WorkflowEntity<UUID> {
     private static final long serialVersionUID = 7337017127753361381L;
 
     /**
-     * описание задачи
+     * Название
      */
-    @Column(name = "DESCRIPTION", length = 2000)
-    private String description;
-
+    @NotNull
+    @Column(name = "NAME", length = 500, nullable = false)
+    private String name;
     /**
-     * Срочная ли задачи
+     * Описание
+     */
+    @NotNull
+    @Column(name = "DESCRIPTION", length = 2000, nullable = false)
+    private String description;
+    /**
+     * Срочная
      */
     @Column(name = "URGENT")
     private Boolean urgent = false;
 
     /**
-     * Специфичные для рабочего процесса поля. Начало.
+     * Специфичные для рабочего процесса поля
      */
     @Column(name = "STEP_NAME")
     private String stepName;
@@ -43,10 +50,15 @@ public class Ticket extends StandardEntity implements WorkflowEntity<UUID> {
 
     @Column(name = "STATUS")
     private Integer status;
-    /**
-     * Специфичные для рабочего процесса поля. Конец.
-     */
 
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getDescription() {
         return description;

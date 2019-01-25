@@ -10,7 +10,7 @@
                               class="com.company.wfstpdemo.entity.Ticket"
                               view="ticket-browse">
             <query>
-                <![CDATA[select e from wfstpdemo$Ticket e]]>
+                <![CDATA[select e from wfstpdemo$Ticket e order by e.urgent desc, e.createTs desc]]>
             </query>
         </collectionDatasource>
     </dsContext>
@@ -32,8 +32,9 @@
                 <action id="remove"/>
             </actions>
             <columns>
-                <column id="urgent"/>
+                <column id="name"/>
                 <column id="description"/>
+                <column id="urgent"/>
                 <column id="status"/>
                 <column id="stepName"/>
                 <column id="workflow"/>
